@@ -73,7 +73,7 @@ function wp_page_numbers_page_of_page($max_page, $paged, $page_of_page_text, $pa
 function wp_page_numbers_prevpage($paged, $max_page, $prevpage)
 {
 	if( $max_page > 1 && $paged > 1 )
-		$pagingString = '<li><a href="'.get_pagenum_link($paged-1). '">'.$prevpage.'</a></li>';
+		$pagingString = ' <div class="pagination-btn previous"><a href="'.get_pagenum_link($paged-1). '">'.$prevpage.'</a></div>';
 	return $pagingString;
 }
 
@@ -152,7 +152,7 @@ function wp_page_numbers_right_side($max_page, $limit_pages, $paged, $pagingStri
 function wp_page_numbers_nextpage($paged, $max_page, $nextpage)
 {
 	if( $paged != "" && $paged < $max_page)
-		$pagingString = '<li><a href="'.get_pagenum_link($paged+1). '">'.$nextpage.'</a></li>'."\n";
+		$pagingString = '<div class="pagination-btn next"><a href="'.get_pagenum_link($paged+1). '">'.$nextpage.'</a></div>'."\n";
 	return $pagingString;
 }
 
@@ -198,9 +198,15 @@ function wp_page_numbers($start = "", $end = "")
 		$limit_pages_right = ($limit_pages/2)-1;
 	}
 	
-	if( $max_page <= $limit_pages ) { $limit_pages = $max_page; }
-	
-	$pagingString = "<div id='wp_page_numbers'>\n";
+    if( $max_page <= $limit_pages ) { $limit_pages = $max_page; }
+
+    $pageString = "";
+	if($next_prev_text != "no")
+		$pagingString .= wp_page_numbers_prevpage($paged, $max_page, $prevpage);
+	if($next_prev_text != "no")
+        $pagingString .= wp_page_numbers_nextpage($paged, $max_page, $nextpage);
+
+	$pagingString .= "<div id='wp_page_numbers'>\n";
 	$pagingString .= '<ul>';
 	
 	if($page_of_page != "no")
@@ -221,8 +227,6 @@ function wp_page_numbers($start = "", $end = "")
 		list ($value1, $value2, $page_check_min) = wp_page_numbers_middle_side($max_page, $paged, $limit_pages_left, $limit_pages_right);
 		$pagingMiddleString .= $value1;
 	}
-	if($next_prev_text != "no")
-		$pagingString .= wp_page_numbers_prevpage($paged, $max_page, $prevpage);
 
 		if ($page_check_min == false && $show_start_end_numbers != "no")
 		{
@@ -241,10 +245,7 @@ function wp_page_numbers($start = "", $end = "")
 			$pagingString .= "<a href=\"" . get_pagenum_link($max_page) . "\">" . $max_page . "</a>";
 			$pagingString .= "</li>\n";
 		}
-	
-	if($next_prev_text != "no")
-		$pagingString .= wp_page_numbers_nextpage($paged, $max_page, $nextpage);
-	
+		
 	$pagingString .= "</ul>\n";
 	
 	$pagingString .= "<div style='float: none; clear: both;'></div>\n";
@@ -582,7 +583,6 @@ function wp_page_numbers_settings()
 </form>
 </div><?php 
 }
-
 function wp_page_numbers_add_to_menu() {
     add_submenu_page('options-general.php', 'WP Page Numbers Options', 'Page Numbers', 10, __FILE__, 'wp_page_numbers_settings');
 }
